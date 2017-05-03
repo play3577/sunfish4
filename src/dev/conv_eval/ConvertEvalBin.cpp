@@ -65,6 +65,7 @@ bool ConvertEvalBin ::convert() {
       for (int pti = 0; pti < sizeof(pieceTypeIndex) / sizeof(pieceTypeIndex[0]); pti++) {
         for (int hi = 0; hi < EvalHandIndex::End; hi++) {
           WRITE_ONE(kingNeighborHand[s][n][pieceTypeIndex[pti]][hi]);
+          if (fv->kingNeighborHand[s][n][pieceTypeIndex[pti]+1][hi] != 0) { abort(); }
         }
       }
     }
@@ -75,6 +76,7 @@ bool ConvertEvalBin ::convert() {
       for (int r = 0; r < RelativeSquare::N; r++) {
         for (int pi = 0; pi < EvalPieceIndex::End; pi++) {
           WRITE_ONE(kingNeighborPieceR[n][pieceTypeIndex[pti]][r][pi]);
+          if (fv->kingNeighborPieceR[n][pieceTypeIndex[pti]+1][r][pi] != 0) { abort(); }
         }
       }
     }
@@ -86,6 +88,7 @@ bool ConvertEvalBin ::convert() {
         for (int r = 0; r < RelativeSquare::N; r++) {
           for (int pi = 0; pi < EvalPieceIndex::End; pi++) {
             WRITE_ONE(kingNeighborPieceXR[s][n][pieceTypeIndex[pti]][r][pi]);
+            if (fv->kingNeighborPieceXR[s][n][pieceTypeIndex[pti]+1][r][pi] != 0) { abort(); }
           }
         }
       }
@@ -98,6 +101,7 @@ bool ConvertEvalBin ::convert() {
         for (int r = 0; r < RelativeSquare::N; r++) {
           for (int pi = 0; pi < EvalPieceIndex::End; pi++) {
             WRITE_ONE(kingNeighborPieceYR[s][n][pieceTypeIndex[pti]][r][pi]);
+            if (fv->kingNeighborPieceYR[s][n][pieceTypeIndex[pti]+1][r][pi] != 0) { abort(); }
           }
         }
       }
@@ -110,6 +114,7 @@ bool ConvertEvalBin ::convert() {
         for (int s2 = 0; s2 < Square::N; s2++) {
           for (int pi = 0; pi < EvalPieceIndex::End; pi++) {
             WRITE_ONE(kingNeighborPiece[s1][n][pieceTypeIndex[pti]][s2][pi]);
+            if (fv->kingNeighborPiece[s1][n][pieceTypeIndex[pti]+1][s2][pi] != 0) { abort(); }
           }
         }
       }
@@ -123,6 +128,7 @@ bool ConvertEvalBin ::convert() {
       for (int s3 = 0; s3 < Square::N; s3++) {
         for (int pti = 0; pti < sizeof(pieceTypeIndex) / sizeof(pieceTypeIndex[0]); pti++) {
           WRITE_ONE(kingKingPiece[s1][s2][s3][pieceTypeIndex[pti]]);
+          if (fv->kingKingPiece[s1][s2][s3][pieceTypeIndex[pti]+1] != 0) { abort(); }
         }
       }
     }
