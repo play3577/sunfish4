@@ -47,12 +47,14 @@ void optimizeOpen(Open open,
   SQUARE_EACH(king) {
     SQUARE_EACH(square) {
       for (int i = 0; i < 8; i++) {
-        oKingOpen[king.raw()][square.raw()][i]
-          = open[square.raw()][i]
-          + kingOpenR[RelativeSquare(king, square).raw()][i]
-          + kingOpenXR[king.getFile()-1][RelativeSquare(king, square).raw()][i]
-          + kingOpenYR[king.getRank()-1][RelativeSquare(king, square).raw()][i]
-          + kingOpen[king.raw()][square.raw()][i];
+        for (int t = 0; t <= 1; t++) {
+          oKingOpen[king.raw()][square.raw()][i][t]
+            = open[square.raw()][i][t]
+            + kingOpenR[RelativeSquare(king, square).raw()][i][t]
+            + kingOpenXR[king.getFile()-1][RelativeSquare(king, square).raw()][i][t]
+            + kingOpenYR[king.getRank()-1][RelativeSquare(king, square).raw()][i][t]
+            + kingOpen[king.raw()][square.raw()][i][t];
+        }
       }
     }
   }
@@ -68,11 +70,13 @@ void optimize(FV& fv, OFV& ofv) {
   SQUARE_EACH(king) {
     SQUARE_EACH(square) {
       for (int i = 0; i < EvalPieceIndex::End; i++) {
-        ofv.kingPiece[king.raw()][square.raw()][i]
-          = fv.kingPiece[king.raw()][square.raw()][i]
-          + fv.kingPieceR[RelativeSquare(king, square).raw()][i]
-          + fv.kingPieceXR[king.getFile()-1][RelativeSquare(king, square).raw()][i]
-          + fv.kingPieceYR[king.getRank()-1][RelativeSquare(king, square).raw()][i];
+        for (int t = 0; t <= 1; t++) {
+          ofv.kingPiece[king.raw()][square.raw()][i][t]
+            = fv.kingPiece[king.raw()][square.raw()][i][t]
+            + fv.kingPieceR[RelativeSquare(king, square).raw()][i][t]
+            + fv.kingPieceXR[king.getFile()-1][RelativeSquare(king, square).raw()][i][t]
+            + fv.kingPieceYR[king.getRank()-1][RelativeSquare(king, square).raw()][i][t];
+        }
       }
     }
   }
@@ -86,11 +90,13 @@ void optimize(FV& fv, OFV& ofv) {
       for (int i1 = 0; i1 < EvalPieceTypeIndex::End; i1++) {
         SQUARE_EACH(square) {
           for (int i2 = 0; i2 < EvalPieceIndex::End; i2++) {
-            ofv.kingNeighborPiece[king.raw()][n][i1][square.raw()][i2]
-              = fv.kingNeighborPiece[king.raw()][n][i1][square.raw()][i2]
-              + fv.kingNeighborPieceR[n][i1][RelativeSquare(king, square).raw()][i2]
-              + fv.kingNeighborPieceXR[king.getFile()-1][n][i1][RelativeSquare(king, square).raw()][i2]
-              + fv.kingNeighborPieceYR[king.getRank()-1][n][i1][RelativeSquare(king, square).raw()][i2];
+            for (int t = 0; t <= 1; t++) {
+              ofv.kingNeighborPiece[king.raw()][n][i1][square.raw()][i2][t]
+                = fv.kingNeighborPiece[king.raw()][n][i1][square.raw()][i2][t]
+                + fv.kingNeighborPieceR[n][i1][RelativeSquare(king, square).raw()][i2][t]
+                + fv.kingNeighborPieceXR[king.getFile()-1][n][i1][RelativeSquare(king, square).raw()][i2][t]
+                + fv.kingNeighborPieceYR[king.getRank()-1][n][i1][RelativeSquare(king, square).raw()][i2][t];
+            }
           }
         }
       }
@@ -184,12 +190,14 @@ void expandOpen(Open open,
   SQUARE_EACH(king) {
     SQUARE_EACH(square) {
       for (int i = 0; i < 8; i++) {
-        auto val = oKingOpen[king.raw()][square.raw()][i];
-        open[square.raw()][i] += val;
-        kingOpenR[RelativeSquare(king, square).raw()][i] += val;
-        kingOpenXR[king.getFile()-1][RelativeSquare(king, square).raw()][i] += val;
-        kingOpenYR[king.getRank()-1][RelativeSquare(king, square).raw()][i] += val;
-        kingOpen[king.raw()][square.raw()][i] = val;
+        for (int t = 0; t <= 1; t++) {
+          auto val = oKingOpen[king.raw()][square.raw()][i][t];
+          open[square.raw()][i][t] += val;
+          kingOpenR[RelativeSquare(king, square).raw()][i][t] += val;
+          kingOpenXR[king.getFile()-1][RelativeSquare(king, square).raw()][i][t] += val;
+          kingOpenYR[king.getRank()-1][RelativeSquare(king, square).raw()][i][t] += val;
+          kingOpen[king.raw()][square.raw()][i][t] = val;
+        }
       }
     }
   }
@@ -208,11 +216,13 @@ void expand(FV& fv, OFV& ofv) {
   SQUARE_EACH(king) {
     SQUARE_EACH(square) {
       for (int i = 0; i < EvalPieceIndex::End; i++) {
-        auto val = ofv.kingPiece[king.raw()][square.raw()][i];
-        fv.kingPieceR[RelativeSquare(king, square).raw()][i] += val;
-        fv.kingPieceXR[king.getFile()-1][RelativeSquare(king, square).raw()][i] += val;
-        fv.kingPieceYR[king.getRank()-1][RelativeSquare(king, square).raw()][i] += val;
-        fv.kingPiece[king.raw()][square.raw()][i] = val;
+        for (int t = 0; t <= 1; t++) {
+          auto val = ofv.kingPiece[king.raw()][square.raw()][i][t];
+          fv.kingPieceR[RelativeSquare(king, square).raw()][i][t] += val;
+          fv.kingPieceXR[king.getFile()-1][RelativeSquare(king, square).raw()][i][t] += val;
+          fv.kingPieceYR[king.getRank()-1][RelativeSquare(king, square).raw()][i][t] += val;
+          fv.kingPiece[king.raw()][square.raw()][i][t] = val;
+        }
       }
     }
   }
@@ -229,11 +239,13 @@ void expand(FV& fv, OFV& ofv) {
       for (int i1 = 0; i1 < EvalPieceTypeIndex::End; i1++) {
         SQUARE_EACH(square) {
           for (int i2 = 0; i2 < EvalPieceIndex::End; i2++) {
-            auto val = ofv.kingNeighborPiece[king.raw()][n][i1][square.raw()][i2];
-            fv.kingNeighborPieceR[n][i1][RelativeSquare(king, square).raw()][i2] += val;
-            fv.kingNeighborPieceXR[king.getFile()-1][n][i1][RelativeSquare(king, square).raw()][i2] += val;
-            fv.kingNeighborPieceYR[king.getRank()-1][n][i1][RelativeSquare(king, square).raw()][i2] += val;
-            fv.kingNeighborPiece[king.raw()][n][i1][square.raw()][i2] = val;
+            for (int t = 0; t <= 1; t++) {
+              auto val = ofv.kingNeighborPiece[king.raw()][n][i1][square.raw()][i2][t];
+              fv.kingNeighborPieceR[n][i1][RelativeSquare(king, square).raw()][i2][t] += val;
+              fv.kingNeighborPieceXR[king.getFile()-1][n][i1][RelativeSquare(king, square).raw()][i2][t] += val;
+              fv.kingNeighborPieceYR[king.getRank()-1][n][i1][RelativeSquare(king, square).raw()][i2][t] += val;
+              fv.kingNeighborPiece[king.raw()][n][i1][square.raw()][i2][t] = val;
+            }
           }
         }
       }
@@ -348,8 +360,10 @@ void symmetrizeOpen(Open open,
     auto rsquare = square.hsym();
     if (rsquare.raw() > square.raw()) {
       for (int i = 0; i < 8; i++) {
-        func(open[square.raw()][i],
-             open[rsquare.raw()][i]);
+        for (int t = 0; t <= 1; t++) {
+          func(open[square.raw()][i][t],
+               open[rsquare.raw()][i][t]);
+        }
       }
     }
   }
@@ -364,8 +378,10 @@ void symmetrizeOpen(Open open,
       auto rsquare = square.hsym();
       if (rking != king || rsquare.raw() > square.raw()) {
         for (int i = 0; i < 8; i++) {
-          func(kingOpen[king.raw()][square.raw()][i],
-               kingOpen[rking.raw()][rsquare.raw()][i]);
+          for (int t = 0; t <= 1; t++) {
+            func(kingOpen[king.raw()][square.raw()][i][t],
+                 kingOpen[rking.raw()][rsquare.raw()][i][t]);
+          }
         }
       }
     }
@@ -379,8 +395,10 @@ void symmetrizeOpen(Open open,
 
     if (rrs > rs) {
       for (int i = 0; i < 8; i++) {
-        func(kingOpenR[rs][i],
-             kingOpenR[rrs][i]);
+        for (int t = 0; t <= 1; t++) {
+          func(kingOpenR[rs][i][t],
+               kingOpenR[rrs][i][t]);
+        }
       }
     }
 
@@ -388,8 +406,10 @@ void symmetrizeOpen(Open open,
       int rf = 8 - f;
       if (rrs != rs || rf > f) {
         for (int i = 0; i < 8; i++) {
-          func(kingOpenXR[f][rs][i],
-               kingOpenXR[rf][rrs][i]);
+          for (int t = 0; t <= 1; t++) {
+            func(kingOpenXR[f][rs][i][t],
+                 kingOpenXR[rf][rrs][i][t]);
+          }
         }
       }
     }
@@ -397,8 +417,10 @@ void symmetrizeOpen(Open open,
     if (rrs > rs) {
       for (int r = 0; r < 9; r++) {
         for (int i = 0; i < 8; i++) {
-          func(kingOpenYR[r][rs][i],
-               kingOpenYR[r][rrs][i]);
+          for (int t = 0; t <= 1; t++) {
+            func(kingOpenYR[r][rs][i][t],
+                 kingOpenYR[r][rrs][i][t]);
+          }
         }
       }
     }
@@ -413,8 +435,10 @@ void symmetrize(FV& fv, T&& func) {
     auto rking = king.hsym();
     if (rking.raw() > king.raw()) {
       for (int h = 0; h < EvalHandIndex::End; h++) {
-        func(fv.kingHand[king.raw()][h],
-             fv.kingHand[rking.raw()][h]);
+        for (int t = 0; t <= 1; t++) {
+          func(fv.kingHand[king.raw()][h][t],
+               fv.kingHand[rking.raw()][h][t]);
+        }
       }
     }
   }
@@ -430,8 +454,10 @@ void symmetrize(FV& fv, T&& func) {
       auto rsquare = square.hsym();
       if (rking != king || rsquare.raw() > square.raw()) {
         for (int i = 0; i < EvalPieceIndex::End; i++) {
-          func(fv.kingPiece[king.raw()][square.raw()][i],
-               fv.kingPiece[rking.raw()][rsquare.raw()][i]);
+          for (int t = 0; t <= 1; t++) {
+            func(fv.kingPiece[king.raw()][square.raw()][i][t],
+                 fv.kingPiece[rking.raw()][rsquare.raw()][i][t]);
+          }
         }
       }
     }
@@ -445,8 +471,10 @@ void symmetrize(FV& fv, T&& func) {
 
     if (rrs > rs) {
       for (int i = 0; i < EvalPieceIndex::End; i++) {
-        func(fv.kingPieceR[rs][i],
-             fv.kingPieceR[rrs][i]);
+        for (int t = 0; t <= 1; t++) {
+          func(fv.kingPieceR[rs][i][t],
+               fv.kingPieceR[rrs][i][t]);
+        }
       }
     }
 
@@ -454,8 +482,10 @@ void symmetrize(FV& fv, T&& func) {
       int rf = 8 - f;
       if (rrs != rs || rf > f) {
         for (int i = 0; i < EvalPieceIndex::End; i++) {
-          func(fv.kingPieceXR[f][rs][i],
-               fv.kingPieceXR[rf][rrs][i]);
+          for (int t = 0; t <= 1; t++) {
+            func(fv.kingPieceXR[f][rs][i][t],
+                 fv.kingPieceXR[rf][rrs][i][t]);
+          }
         }
       }
     }
@@ -463,8 +493,10 @@ void symmetrize(FV& fv, T&& func) {
     if (rrs > rs) {
       for (int r = 0; r < 9; r++) {
         for (int i = 0; i < EvalPieceIndex::End; i++) {
-          func(fv.kingPieceYR[r][rs][i],
-               fv.kingPieceYR[r][rrs][i]);
+          for (int t = 0; t <= 1; t++) {
+            func(fv.kingPieceYR[r][rs][i][t],
+                 fv.kingPieceYR[r][rrs][i][t]);
+          }
         }
       }
     }
@@ -482,8 +514,10 @@ void symmetrize(FV& fv, T&& func) {
       if (rking != king || rn > n) {
         for (int i = 0; i < EvalPieceTypeIndex::End; i++) {
           for (int h = 0; h < EvalHandIndex::End; h++) {
-            func(fv.kingNeighborHand[king.raw()][n][i][h],
-                 fv.kingNeighborHand[rking.raw()][rn][i][h]);
+            for (int t = 0; t <= 1; t++) {
+              func(fv.kingNeighborHand[king.raw()][n][i][h][t],
+                   fv.kingNeighborHand[rking.raw()][rn][i][h][t]);
+            }
           }
         }
       }
@@ -507,8 +541,10 @@ void symmetrize(FV& fv, T&& func) {
         if (rsquare != square || rn != n || rking.raw() > king.raw()) {
           for (int i1 = 0; i1 < EvalPieceTypeIndex::End; i1++) {
             for (int i2 = 0; i2 < EvalPieceIndex::End; i2++) {
-              func(fv.kingNeighborPiece[king.raw()][n][i1][square.raw()][i2],
-                   fv.kingNeighborPiece[rking.raw()][rn][i1][rsquare.raw()][i2]);
+              for (int t = 0; t <= 1; t++) {
+                func(fv.kingNeighborPiece[king.raw()][n][i1][square.raw()][i2][t],
+                     fv.kingNeighborPiece[rking.raw()][rn][i1][rsquare.raw()][i2][t]);
+              }
             }
           }
         }
@@ -531,8 +567,10 @@ void symmetrize(FV& fv, T&& func) {
       if (rn != n || rrs > rs) {
         for (int i1 = 0; i1 < EvalPieceTypeIndex::End; i1++) {
           for (int i2 = 0; i2 < EvalPieceIndex::End; i2++) {
-            func(fv.kingNeighborPieceR[n][i1][rs][i2],
-                 fv.kingNeighborPieceR[rn][i1][rrs][i2]);
+            for (int t = 0; t <= 1; t++) {
+              func(fv.kingNeighborPieceR[n][i1][rs][i2][t],
+                   fv.kingNeighborPieceR[rn][i1][rrs][i2][t]);
+            }
           }
         }
       }
@@ -543,8 +581,10 @@ void symmetrize(FV& fv, T&& func) {
         if (rn != n || rrs != rs || rf > f) {
           for (int i1 = 0; i1 < EvalPieceTypeIndex::End; i1++) {
             for (int i2 = 0; i2 < EvalPieceIndex::End; i2++) {
-              func(fv.kingNeighborPieceXR[f][n][i1][rs][i2],
-                   fv.kingNeighborPieceXR[rf][rn][i1][rrs][i2]);
+              for (int t = 0; t <= 1; t++) {
+                func(fv.kingNeighborPieceXR[f][n][i1][rs][i2][t],
+                     fv.kingNeighborPieceXR[rf][rn][i1][rrs][i2][t]);
+              }
             }
           }
         }
@@ -554,8 +594,10 @@ void symmetrize(FV& fv, T&& func) {
         for (int r = 0; r < 9; r++) {
           for (int i1 = 0; i1 < EvalPieceTypeIndex::End; i1++) {
             for (int i2 = 0; i2 < EvalPieceIndex::End; i2++) {
-              func(fv.kingNeighborPieceYR[r][n][i1][rs][i2],
-                   fv.kingNeighborPieceYR[r][rn][i1][rrs][i2]);
+              for (int t = 0; t <= 1; t++) {
+                func(fv.kingNeighborPieceYR[r][n][i1][rs][i2][t],
+                     fv.kingNeighborPieceYR[r][rn][i1][rrs][i2][t]);
+              }
             }
           }
         }
@@ -578,8 +620,10 @@ void symmetrize(FV& fv, T&& func) {
 
       if (rking1 != king1 || rking2 != king2) {
         for (int h = 0; h < EvalHandTypeIndex::End; h++) {
-          func(fv.kingKingHand[king1.raw()][king2.raw()][h],
-               fv.kingKingHand[rking1.raw()][rking2.raw()][h]);
+          for (int t = 0; t <= 1; t++) {
+            func(fv.kingKingHand[king1.raw()][king2.raw()][h][t],
+                 fv.kingKingHand[rking1.raw()][rking2.raw()][h][t]);
+          }
         }
       }
 
@@ -590,8 +634,10 @@ void symmetrize(FV& fv, T&& func) {
         }
 
         for (int i = 0; i < EvalPieceTypeIndex::End; i++) {
-          func(fv.kingKingPiece[king1.raw()][king2.raw()][square.raw()][i],
-               fv.kingKingPiece[rking1.raw()][rking2.raw()][rsquare.raw()][i]);
+          for (int t = 0; t <= 1; t++) {
+            func(fv.kingKingPiece[king1.raw()][king2.raw()][square.raw()][i][t],
+                 fv.kingKingPiece[rking1.raw()][rking2.raw()][rsquare.raw()][i][t]);
+          }
         }
       }
     }
@@ -669,6 +715,8 @@ template <FeatureOperationType type, class OFV, class T>
 inline
 T operate(OFV& ofv, const Position& position, T delta) {
   T sum = 0;
+  int bt = position.getTurn() == Turn::Black ? 0 : 1;
+  int wt = position.getTurn() == Turn::Black ? 1 : 0;
   auto bking = position.getBlackKingSquare().raw();
   auto wking = position.getWhiteKingSquare().psym().raw();
 
@@ -714,25 +762,25 @@ T operate(OFV& ofv, const Position& position, T delta) {
   auto n = blackHand.get(PieceType::t()); \
   if (n != 0) { \
     if (type == FeatureOperationType::Evaluate) { \
-      sum += ofv.kingHand[bking][EvalHandIndex::B ## T + n - 1]; \
-      sum -= ofv.kingHand[wking][EvalHandIndex::W ## T + n - 1]; \
+      sum += ofv.kingHand[bking][EvalHandIndex::B ## T + n - 1][bt]; \
+      sum -= ofv.kingHand[wking][EvalHandIndex::W ## T + n - 1][wt]; \
       for (int i = 0; i < bnn; i++) { \
-        sum += ofv.kingNeighborHand[bking][bns[i].n][bns[i].idx][EvalHandIndex::B ## T + n - 1]; \
+        sum += ofv.kingNeighborHand[bking][bns[i].n][bns[i].idx][EvalHandIndex::B ## T + n - 1][bt]; \
       } \
       for (int i = 0; i < wnn; i++) { \
-        sum -= ofv.kingNeighborHand[wking][wns[i].n][wns[i].idx][EvalHandIndex::W ## T + n - 1]; \
+        sum -= ofv.kingNeighborHand[wking][wns[i].n][wns[i].idx][EvalHandIndex::W ## T + n - 1][wt]; \
       } \
-      sum += ofv.kingKingHand[bking][wking][EvalHandTypeIndex:: T + n - 1]; \
+      sum += ofv.kingKingHand[bking][wking][EvalHandTypeIndex:: T + n - 1][bt]; \
     } else { \
-      ofv.kingHand[bking][EvalHandIndex::B ## T + n - 1] += delta; \
-      ofv.kingHand[wking][EvalHandIndex::W ## T + n - 1] -= delta; \
+      ofv.kingHand[bking][EvalHandIndex::B ## T + n - 1][bt] += delta; \
+      ofv.kingHand[wking][EvalHandIndex::W ## T + n - 1][wt] -= delta; \
       for (int i = 0; i < bnn; i++) { \
-        ofv.kingNeighborHand[bking][bns[i].n][bns[i].idx][EvalHandIndex::B ## T + n - 1] += delta; \
+        ofv.kingNeighborHand[bking][bns[i].n][bns[i].idx][EvalHandIndex::B ## T + n - 1][bt] += delta; \
       } \
       for (int i = 0; i < wnn; i++) { \
-        ofv.kingNeighborHand[wking][wns[i].n][wns[i].idx][EvalHandIndex::W ## T + n - 1] -= delta; \
+        ofv.kingNeighborHand[wking][wns[i].n][wns[i].idx][EvalHandIndex::W ## T + n - 1][wt] -= delta; \
       } \
-      ofv.kingKingHand[bking][wking][EvalHandTypeIndex:: T + n - 1] += delta; \
+      ofv.kingKingHand[bking][wking][EvalHandTypeIndex:: T + n - 1][bt] += delta; \
     } \
   } \
 } while (false)
@@ -752,25 +800,25 @@ T operate(OFV& ofv, const Position& position, T delta) {
   auto n = whiteHand.get(PieceType::t()); \
   if (n != 0) { \
     if (type == FeatureOperationType::Evaluate) { \
-      sum += ofv.kingHand[bking][EvalHandIndex::W ## T + n - 1]; \
-      sum -= ofv.kingHand[wking][EvalHandIndex::B ## T + n - 1]; \
+      sum += ofv.kingHand[bking][EvalHandIndex::W ## T + n - 1][bt]; \
+      sum -= ofv.kingHand[wking][EvalHandIndex::B ## T + n - 1][wt]; \
       for (int i = 0; i < bnn; i++) { \
-        sum += ofv.kingNeighborHand[bking][bns[i].n][bns[i].idx][EvalHandIndex::W ## T + n - 1]; \
+        sum += ofv.kingNeighborHand[bking][bns[i].n][bns[i].idx][EvalHandIndex::W ## T + n - 1][bt]; \
       } \
       for (int i = 0; i < wnn; i++) { \
-        sum -= ofv.kingNeighborHand[wking][wns[i].n][wns[i].idx][EvalHandIndex::B ## T + n - 1]; \
+        sum -= ofv.kingNeighborHand[wking][wns[i].n][wns[i].idx][EvalHandIndex::B ## T + n - 1][wt]; \
       } \
-      sum -= ofv.kingKingHand[wking][bking][EvalHandTypeIndex:: T + n - 1]; \
+      sum -= ofv.kingKingHand[wking][bking][EvalHandTypeIndex:: T + n - 1][wt]; \
     } else { \
-      ofv.kingHand[bking][EvalHandIndex::W ## T + n - 1] += delta; \
-      ofv.kingHand[wking][EvalHandIndex::B ## T + n - 1] -= delta; \
+      ofv.kingHand[bking][EvalHandIndex::W ## T + n - 1][bt] += delta; \
+      ofv.kingHand[wking][EvalHandIndex::B ## T + n - 1][wt] -= delta; \
       for (int i = 0; i < bnn; i++) { \
-        ofv.kingNeighborHand[bking][bns[i].n][bns[i].idx][EvalHandIndex::W ## T + n - 1] += delta; \
+        ofv.kingNeighborHand[bking][bns[i].n][bns[i].idx][EvalHandIndex::W ## T + n - 1][bt] += delta; \
       } \
       for (int i = 0; i < wnn; i++) { \
-        ofv.kingNeighborHand[wking][wns[i].n][wns[i].idx][EvalHandIndex::B ## T + n - 1] -= delta; \
+        ofv.kingNeighborHand[wking][wns[i].n][wns[i].idx][EvalHandIndex::B ## T + n - 1][wt] -= delta; \
       } \
-      ofv.kingKingHand[wking][bking][EvalHandTypeIndex:: T + n - 1] -= delta; \
+      ofv.kingKingHand[wking][bking][EvalHandTypeIndex:: T + n - 1][wt] -= delta; \
     } \
   } \
 } while (false)
@@ -796,32 +844,32 @@ T operate(OFV& ofv, const Position& position, T delta) {
       int wIndex = getEvalPieceIndex(piece.enemy());
 
       if (type == FeatureOperationType::Evaluate) {
-        sum += ofv.kingPiece[bking][bs][bIndex];
-        sum -= ofv.kingPiece[wking][ws][wIndex];
+        sum += ofv.kingPiece[bking][bs][bIndex][bt];
+        sum -= ofv.kingPiece[wking][ws][wIndex][wt];
         for (int i = 0; i < bnn; i++) {
-          sum += ofv.kingNeighborPiece[bking][bns[i].n][bns[i].idx][bs][bIndex];
+          sum += ofv.kingNeighborPiece[bking][bns[i].n][bns[i].idx][bs][bIndex][bt];
         }
         for (int i = 0; i < wnn; i++) {
-          sum -= ofv.kingNeighborPiece[wking][wns[i].n][wns[i].idx][ws][wIndex];
+          sum -= ofv.kingNeighborPiece[wking][wns[i].n][wns[i].idx][ws][wIndex][wt];
         }
         if (piece.isBlack()) {
-          sum += ofv.kingKingPiece[bking][wking][bs][getEvalPieceTypeIndex(piece.type())];
+          sum += ofv.kingKingPiece[bking][wking][bs][getEvalPieceTypeIndex(piece.type())][bt];
         } else {
-          sum -= ofv.kingKingPiece[wking][bking][ws][getEvalPieceTypeIndex(piece.type())];
+          sum -= ofv.kingKingPiece[wking][bking][ws][getEvalPieceTypeIndex(piece.type())][wt];
         }
       } else {
-        ofv.kingPiece[bking][bs][bIndex] += delta;
-        ofv.kingPiece[wking][ws][wIndex] -= delta;
+        ofv.kingPiece[bking][bs][bIndex][bt] += delta;
+        ofv.kingPiece[wking][ws][wIndex][wt] -= delta;
         for (int i = 0; i < bnn; i++) {
-          ofv.kingNeighborPiece[bking][bns[i].n][bns[i].idx][bs][bIndex] += delta;
+          ofv.kingNeighborPiece[bking][bns[i].n][bns[i].idx][bs][bIndex][bt] += delta;
         }
         for (int i = 0; i < wnn; i++) {
-          ofv.kingNeighborPiece[wking][wns[i].n][wns[i].idx][ws][wIndex] -= delta;
+          ofv.kingNeighborPiece[wking][wns[i].n][wns[i].idx][ws][wIndex][wt] -= delta;
         }
         if (piece.isBlack()) {
-          ofv.kingKingPiece[bking][wking][bs][getEvalPieceTypeIndex(piece.type())] += delta;
+          ofv.kingKingPiece[bking][wking][bs][getEvalPieceTypeIndex(piece.type())][bt] += delta;
         } else {
-          ofv.kingKingPiece[wking][bking][ws][getEvalPieceTypeIndex(piece.type())] -= delta;
+          ofv.kingKingPiece[wking][bking][ws][getEvalPieceTypeIndex(piece.type())][wt] -= delta;
         }
       }
     }
@@ -839,21 +887,21 @@ T operate(OFV& ofv, const Position& position, T delta) {
       int count = MoveTables::diagR45(occR45, square).count() - 1;
       ASSERT(count >= 0 && count < 8);
       if (type == FeatureOperationType::Evaluate) {
-        sum += ofv.kingBBishopDiagR45[bking][bIndex][count];
-        sum -= ofv.kingWBishopDiagR45[wking][wIndex][count];
+        sum += ofv.kingBBishopDiagR45[bking][bIndex][count][bt];
+        sum -= ofv.kingWBishopDiagR45[wking][wIndex][count][wt];
       } else {
-        ofv.kingBBishopDiagR45[bking][bIndex][count] += delta;
-        ofv.kingWBishopDiagR45[wking][wIndex][count] -= delta;
+        ofv.kingBBishopDiagR45[bking][bIndex][count][bt] += delta;
+        ofv.kingWBishopDiagR45[wking][wIndex][count][wt] -= delta;
       }
 
       count = MoveTables::diagL45(occL45, square).count() - 1;
       ASSERT(count >= 0 && count < 8);
       if (type == FeatureOperationType::Evaluate) {
-        sum += ofv.kingBBishopDiagL45[bking][bIndex][count];
-        sum -= ofv.kingWBishopDiagL45[wking][wIndex][count];
+        sum += ofv.kingBBishopDiagL45[bking][bIndex][count][bt];
+        sum -= ofv.kingWBishopDiagL45[wking][wIndex][count][wt];
       } else {
-        ofv.kingBBishopDiagL45[bking][bIndex][count] += delta;
-        ofv.kingWBishopDiagL45[wking][wIndex][count] -= delta;
+        ofv.kingBBishopDiagL45[bking][bIndex][count][bt] += delta;
+        ofv.kingWBishopDiagL45[wking][wIndex][count][wt] -= delta;
       }
     }
   }
@@ -867,21 +915,21 @@ T operate(OFV& ofv, const Position& position, T delta) {
       int count = MoveTables::diagR45(occR45, square).count() - 1;
       ASSERT(count >= 0 && count < 8);
       if (type == FeatureOperationType::Evaluate) {
-        sum += ofv.kingWBishopDiagR45[bking][bIndex][count];
-        sum -= ofv.kingBBishopDiagR45[wking][wIndex][count];
+        sum += ofv.kingWBishopDiagR45[bking][bIndex][count][bt];
+        sum -= ofv.kingBBishopDiagR45[wking][wIndex][count][wt];
       } else {
-        ofv.kingWBishopDiagR45[bking][bIndex][count] += delta;
-        ofv.kingBBishopDiagR45[wking][wIndex][count] -= delta;
+        ofv.kingWBishopDiagR45[bking][bIndex][count][bt] += delta;
+        ofv.kingBBishopDiagR45[wking][wIndex][count][wt] -= delta;
       }
 
       count = MoveTables::diagL45(occL45, square).count() - 1;
       ASSERT(count >= 0 && count < 8);
       if (type == FeatureOperationType::Evaluate) {
-        sum += ofv.kingWBishopDiagL45[bking][bIndex][count];
-        sum -= ofv.kingBBishopDiagL45[wking][wIndex][count];
+        sum += ofv.kingWBishopDiagL45[bking][bIndex][count][bt];
+        sum -= ofv.kingBBishopDiagL45[wking][wIndex][count][wt];
       } else {
-        ofv.kingWBishopDiagL45[bking][bIndex][count] += delta;
-        ofv.kingBBishopDiagL45[wking][wIndex][count] -= delta;
+        ofv.kingWBishopDiagL45[bking][bIndex][count][bt] += delta;
+        ofv.kingBBishopDiagL45[wking][wIndex][count][wt] -= delta;
       }
     }
   }
@@ -898,21 +946,21 @@ T operate(OFV& ofv, const Position& position, T delta) {
       int count = MoveTables::ver(occ, square).count() - 1;
       ASSERT(count >= 0 && count < 8);
       if (type == FeatureOperationType::Evaluate) {
-        sum += ofv.kingBRookVer[bking][bIndex][count];
-        sum -= ofv.kingWRookVer[wking][wIndex][count];
+        sum += ofv.kingBRookVer[bking][bIndex][count][bt];
+        sum -= ofv.kingWRookVer[wking][wIndex][count][wt];
       } else {
-        ofv.kingBRookVer[bking][bIndex][count] += delta;
-        ofv.kingWRookVer[wking][wIndex][count] -= delta;
+        ofv.kingBRookVer[bking][bIndex][count][bt] += delta;
+        ofv.kingWRookVer[wking][wIndex][count][wt] -= delta;
       }
 
       count = MoveTables::hor(occ90, square).count() - 1;
       ASSERT(count >= 0 && count < 8);
       if (type == FeatureOperationType::Evaluate) {
-        sum += ofv.kingBRookHor[bking][bIndex][count];
-        sum -= ofv.kingWRookHor[wking][wIndex][count];
+        sum += ofv.kingBRookHor[bking][bIndex][count][bt];
+        sum -= ofv.kingWRookHor[wking][wIndex][count][wt];
       } else {
-        ofv.kingBRookHor[bking][bIndex][count] += delta;
-        ofv.kingWRookHor[wking][wIndex][count] -= delta;
+        ofv.kingBRookHor[bking][bIndex][count][bt] += delta;
+        ofv.kingWRookHor[wking][wIndex][count][wt] -= delta;
       }
     }
   }
@@ -926,21 +974,21 @@ T operate(OFV& ofv, const Position& position, T delta) {
       int count = MoveTables::ver(occ, square).count() - 1;
       ASSERT(count >= 0 && count < 8);
       if (type == FeatureOperationType::Evaluate) {
-        sum += ofv.kingWRookVer[bking][bIndex][count];
-        sum -= ofv.kingBRookVer[wking][wIndex][count];
+        sum += ofv.kingWRookVer[bking][bIndex][count][bt];
+        sum -= ofv.kingBRookVer[wking][wIndex][count][wt];
       } else {
-        ofv.kingWRookVer[bking][bIndex][count] += delta;
-        ofv.kingBRookVer[wking][wIndex][count] -= delta;
+        ofv.kingWRookVer[bking][bIndex][count][bt] += delta;
+        ofv.kingBRookVer[wking][wIndex][count][wt] -= delta;
       }
 
       count = MoveTables::hor(occ90, square).count() - 1;
       ASSERT(count >= 0 && count < 8);
       if (type == FeatureOperationType::Evaluate) {
-        sum += ofv.kingWRookHor[bking][bIndex][count];
-        sum -= ofv.kingBRookHor[wking][wIndex][count];
+        sum += ofv.kingWRookHor[bking][bIndex][count][bt];
+        sum -= ofv.kingBRookHor[wking][wIndex][count][wt];
       } else {
-        ofv.kingWRookHor[bking][bIndex][count] += delta;
-        ofv.kingBRookHor[wking][wIndex][count] -= delta;
+        ofv.kingWRookHor[bking][bIndex][count][bt] += delta;
+        ofv.kingBRookHor[wking][wIndex][count][wt] -= delta;
       }
     }
   }
@@ -954,11 +1002,11 @@ T operate(OFV& ofv, const Position& position, T delta) {
       int count = MoveTables::blackLance(occ, square).count() - 1;
       ASSERT(count >= 0 && count < 8);
       if (type == FeatureOperationType::Evaluate) {
-        sum += ofv.kingBLance[bking][bIndex][count];
-        sum -= ofv.kingWLance[wking][wIndex][count];
+        sum += ofv.kingBLance[bking][bIndex][count][bt];
+        sum -= ofv.kingWLance[wking][wIndex][count][wt];
       } else {
-        ofv.kingBLance[bking][bIndex][count] += delta;
-        ofv.kingWLance[wking][wIndex][count] -= delta;
+        ofv.kingBLance[bking][bIndex][count][bt] += delta;
+        ofv.kingWLance[wking][wIndex][count][wt] -= delta;
       }
     }
   }
@@ -972,11 +1020,11 @@ T operate(OFV& ofv, const Position& position, T delta) {
       int count = MoveTables::whiteLance(occ, square).count() - 1;
       ASSERT(count >= 0 && count < 8);
       if (type == FeatureOperationType::Evaluate) {
-        sum += ofv.kingWLance[bking][bIndex][count];
-        sum -= ofv.kingBLance[wking][wIndex][count];
+        sum += ofv.kingWLance[bking][bIndex][count][bt];
+        sum -= ofv.kingBLance[wking][wIndex][count][wt];
       } else {
-        ofv.kingWLance[bking][bIndex][count] += delta;
-        ofv.kingBLance[wking][wIndex][count] -= delta;
+        ofv.kingWLance[bking][bIndex][count][bt] += delta;
+        ofv.kingBLance[wking][wIndex][count][wt] -= delta;
       }
     }
   }

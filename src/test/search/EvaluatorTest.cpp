@@ -35,7 +35,7 @@ TEST_BEFORE(EvaluatorTest) {
 
 TEST(EvaluatorTest, testSymmetry) {
   {
-    Position pos = PositionUtil::createPositionFromCsaString(
+    Position pos1 = PositionUtil::createPositionFromCsaString(
       "P1-KY-KE-GI-KI-OU-KI-GI-KE-KY\n"
       "P2 * -HI *  *  *  *  * -KA * \n"
       "P3-FU-FU-FU-FU-FU-FU-FU-FU-FU\n"
@@ -48,16 +48,33 @@ TEST(EvaluatorTest, testSymmetry) {
       "P+\n"
       "P-\n"
       "+\n");
+    Position pos2 = PositionUtil::createPositionFromCsaString(
+      "P1-KY-KE-GI-KI-OU-KI-GI-KE-KY\n"
+      "P2 * -HI *  *  *  *  * -KA * \n"
+      "P3-FU-FU-FU-FU-FU-FU-FU-FU-FU\n"
+      "P4 *  *  *  *  *  *  *  *  * \n"
+      "P5 *  *  *  *  *  *  *  *  * \n"
+      "P6 *  *  *  *  *  *  *  *  * \n"
+      "P7+FU+FU+FU+FU+FU+FU+FU+FU+FU\n"
+      "P8 * +KA *  *  *  *  * +HI * \n"
+      "P9+KY+KE+GI+KI+OU+KI+GI+KE+KY\n"
+      "P+\n"
+      "P-\n"
+      "-\n");
 
-    auto materialScore = g_eval.calculateMaterialScore(pos);
-    auto score = g_eval.calculateTotalScore(materialScore,
-                                            pos);
-    ASSERT_EQ(Score::zero(), materialScore);
-    ASSERT_EQ(Score::zero(), score);
+    auto materialScore1 = g_eval.calculateMaterialScore(pos1);
+    auto materialScore2 = g_eval.calculateMaterialScore(pos2);
+    auto score1 = g_eval.calculateTotalScore(materialScore1,
+                                             pos1);
+    auto score2 = g_eval.calculateTotalScore(materialScore2,
+                                             pos2);
+    ASSERT_EQ(Score::zero(), materialScore1);
+    ASSERT_EQ(Score::zero(), materialScore2);
+    ASSERT_EQ(-score1, score2);
   }
 
   {
-    Position pos = PositionUtil::createPositionFromCsaString(
+    Position pos1 = PositionUtil::createPositionFromCsaString(
       "P1 *  *  *  * -OU *  *  *  * \n"
       "P2 *  *  *  *  *  *  *  *  * \n"
       "P3 *  *  *  *  *  *  *  *  * \n"
@@ -70,12 +87,29 @@ TEST(EvaluatorTest, testSymmetry) {
       "P+00HI00KA00KI00GI00KE00KY00FU00FU\n"
       "P-00HI00KA00KI00GI00KE00KY00FU00FU\n"
       "+\n");
+    Position pos2 = PositionUtil::createPositionFromCsaString(
+      "P1 *  *  *  * -OU *  *  *  * \n"
+      "P2 *  *  *  *  *  *  *  *  * \n"
+      "P3 *  *  *  *  *  *  *  *  * \n"
+      "P4 *  *  *  *  *  *  *  *  * \n"
+      "P5 *  *  *  *  *  *  *  *  * \n"
+      "P6 *  *  *  *  *  *  *  *  * \n"
+      "P7 *  *  *  *  *  *  *  *  * \n"
+      "P8 *  *  *  *  *  *  *  *  * \n"
+      "P9 *  *  *  * +OU *  *  *  * \n"
+      "P+00HI00KA00KI00GI00KE00KY00FU00FU\n"
+      "P-00HI00KA00KI00GI00KE00KY00FU00FU\n"
+      "-\n");
 
-    auto materialScore = g_eval.calculateMaterialScore(pos);
-    auto score = g_eval.calculateTotalScore(materialScore,
-                                            pos);
-    ASSERT_EQ(Score::zero(), materialScore);
-    ASSERT_EQ(Score::zero(), score);
+    auto materialScore1 = g_eval.calculateMaterialScore(pos1);
+    auto score1 = g_eval.calculateTotalScore(materialScore1,
+                                             pos1);
+    auto materialScore2 = g_eval.calculateMaterialScore(pos2);
+    auto score2 = g_eval.calculateTotalScore(materialScore2,
+                                             pos2);
+    ASSERT_EQ(Score::zero(), materialScore1);
+    ASSERT_EQ(Score::zero(), materialScore2);
+    ASSERT_EQ(-score1, score2);
   }
 
   {
