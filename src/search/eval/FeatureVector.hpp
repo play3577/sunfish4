@@ -10,7 +10,7 @@
 #include "core/base/Piece.hpp"
 #include "core/position/Hand.hpp"
 
-#define SUNFISH_FV_VERSION "2017.05.05.1"
+#define SUNFISH_FV_VERSION "2017.05.23.0"
 
 namespace sunfish {
 
@@ -131,8 +131,8 @@ struct FeatureVector {
   using KingOpenXR = Type[SQUARE_FILES][RelativeSquare::N][8];
   using KingOpenYR = Type[SQUARE_RANKS][RelativeSquare::N][8];
   using KingOpen = Type[Square::N][Square::N][8];
-  using KingEffect9 = Type[Square::N][10][10];
-  using KingEffect25 = Type[Square::N][26][26];
+  using KingEffect9 = Type[Square::N][10];
+  using KingEffect25 = Type[Square::N][26];
 
   KingHand kingHand;
 
@@ -211,8 +211,10 @@ struct FeatureVector {
   KingOpenYR kingWLanceYR;
   KingOpen kingWLance;
 
-  KingEffect9 kingEffect9;
-  KingEffect25 kingEffect25;
+  KingEffect9 kingAllyEffect9;
+  KingEffect9 kingEnemyEffect9;
+  KingEffect25 kingAllyEffect25;
+  KingEffect25 kingEnemyEffect25;
 };
 
 template <class T>
@@ -225,8 +227,8 @@ struct OptimizedFeatureVector {
   using KingKingHand = Type[Square::N][Square::N][EvalHandTypeIndex::End];
   using KingKingPiece = Type[Square::N][Square::N][Square::N][EvalPieceTypeIndex::End];
   using KingOpen = Type[Square::N][Square::N][8];
-  using KingEffect9 = Type[Square::N][10][10];
-  using KingEffect25 = Type[Square::N][26][26];
+  using KingEffect9 = Type[Square::N][10];
+  using KingEffect25 = Type[Square::N][26];
 
   KingHand kingHand;
 
@@ -250,8 +252,10 @@ struct OptimizedFeatureVector {
   KingOpen kingBLance;
   KingOpen kingWLance;
 
-  KingEffect9 kingEffect9;
-  KingEffect25 kingEffect25;
+  KingEffect9 kingAllyEffect9;
+  KingEffect9 kingEnemyEffect9;
+  KingEffect25 kingAllyEffect25;
+  KingEffect25 kingEnemyEffect25;
 };
 
 } // namespace sunfish

@@ -161,8 +161,10 @@ void optimize(FV& fv, OFV& ofv) {
                fv.kingWLance,
                ofv.kingWLance);
 
-  FV_PART_COPY(ofv, fv, kingEffect9);
-  FV_PART_COPY(ofv, fv, kingEffect25);
+  FV_PART_COPY(ofv, fv, kingAllyEffect9);
+  FV_PART_COPY(ofv, fv, kingEnemyEffect9);
+  FV_PART_COPY(ofv, fv, kingAllyEffect25);
+  FV_PART_COPY(ofv, fv, kingEnemyEffect25);
 }
 
 template <class Open,
@@ -307,8 +309,10 @@ void expand(FV& fv, OFV& ofv) {
                fv.kingWLance,
                ofv.kingWLance);
 
-  FV_PART_COPY(fv, ofv, kingEffect9);
-  FV_PART_COPY(fv, ofv, kingEffect25);
+  FV_PART_COPY(fv, ofv, kingAllyEffect9);
+  FV_PART_COPY(fv, ofv, kingEnemyEffect9);
+  FV_PART_COPY(fv, ofv, kingAllyEffect25);
+  FV_PART_COPY(fv, ofv, kingEnemyEffect25);
 }
 
 template <class FV>
@@ -672,17 +676,17 @@ void symmetrize(FV& fv, T&& func) {
       continue;
     }
 
-    for (unsigned bc = 0; bc <= 9; bc++) {
-      for (unsigned wc = 0; wc <= 9; wc++) {
-        func(fv.kingEffect9[king.raw()][bc][wc],
-             fv.kingEffect9[rking.raw()][bc][wc]);
-      }
+    for (unsigned c = 0; c <= 9; c++) {
+      func(fv.kingAllyEffect9[king.raw()][c],
+           fv.kingAllyEffect9[rking.raw()][c]);
+      func(fv.kingEnemyEffect9[king.raw()][c],
+           fv.kingEnemyEffect9[rking.raw()][c]);
     }
-    for (unsigned bc = 0; bc <= 25; bc++) {
-      for (unsigned wc = 0; wc <= 25; wc++) {
-        func(fv.kingEffect25[king.raw()][bc][wc],
-             fv.kingEffect25[rking.raw()][bc][wc]);
-      }
+    for (unsigned c = 0; c <= 25; c++) {
+      func(fv.kingAllyEffect25[king.raw()][c],
+           fv.kingAllyEffect25[rking.raw()][c]);
+      func(fv.kingEnemyEffect25[king.raw()][c],
+           fv.kingEnemyEffect25[rking.raw()][c]);
     }
   }
 }
@@ -1388,9 +1392,11 @@ T operate(OFV& ofv, const Position& position, T delta) {
     auto bc = (bef & mask).count();
     auto wc = (wef & mask).count();
     if (type == FeatureOperationType::Evaluate) {
-      sum += ofv.kingEffect9[m.bking][bc][wc];
+      sum += ofv.kingAllyEffect9[m.bking][bc];
+      sum += ofv.kingEnemyEffect9[m.bking][wc];
     } else {
-      ofv.kingEffect9[m.bking][bc][wc] += delta;
+      ofv.kingAllyEffect9[m.bking][bc] += delta;
+      ofv.kingEnemyEffect9[m.bking][wc] += delta;
     }
   }
 
@@ -1400,9 +1406,11 @@ T operate(OFV& ofv, const Position& position, T delta) {
     auto bc = (bef & mask).count();
     auto wc = (wef & mask).count();
     if (type == FeatureOperationType::Evaluate) {
-      sum += ofv.kingEffect25[m.bking][bc][wc];
+      sum += ofv.kingAllyEffect25[m.bking][bc];
+      sum += ofv.kingEnemyEffect25[m.bking][wc];
     } else {
-      ofv.kingEffect25[m.bking][bc][wc] += delta;
+      ofv.kingAllyEffect25[m.bking][bc] += delta;
+      ofv.kingEnemyEffect25[m.bking][wc] += delta;
     }
   }
 
@@ -1412,9 +1420,11 @@ T operate(OFV& ofv, const Position& position, T delta) {
     auto bc = (bef & mask).count();
     auto wc = (wef & mask).count();
     if (type == FeatureOperationType::Evaluate) {
-      sum -= ofv.kingEffect9[m.wking][wc][bc];
+      sum -= ofv.kingAllyEffect9[m.wking][wc];
+      sum -= ofv.kingEnemyEffect9[m.wking][bc];
     } else {
-      ofv.kingEffect9[m.wking][wc][bc] -= delta;
+      ofv.kingAllyEffect9[m.wking][wc] -= delta;
+      ofv.kingEnemyEffect9[m.wking][bc] -= delta;
     }
   }
 
@@ -1424,9 +1434,11 @@ T operate(OFV& ofv, const Position& position, T delta) {
     auto bc = (bef & mask).count();
     auto wc = (wef & mask).count();
     if (type == FeatureOperationType::Evaluate) {
-      sum -= ofv.kingEffect25[m.wking][wc][bc];
+      sum -= ofv.kingAllyEffect25[m.wking][wc];
+      sum -= ofv.kingEnemyEffect25[m.wking][bc];
     } else {
-      ofv.kingEffect25[m.wking][wc][bc] -= delta;
+      ofv.kingAllyEffect25[m.wking][wc] -= delta;
+      ofv.kingEnemyEffect25[m.wking][bc] -= delta;
     }
   }
 
@@ -1545,8 +1557,10 @@ SummaryListType summarize(const FV& fv) {
     FV_SUMMARIZE(kingWLanceXR),
     FV_SUMMARIZE(kingWLanceYR),
     FV_SUMMARIZE(kingWLance),
-    FV_SUMMARIZE(kingEffect9),
-    FV_SUMMARIZE(kingEffect25),
+    FV_SUMMARIZE(kingAllyEffect9),
+    FV_SUMMARIZE(kingEnemyEffect9),
+    FV_SUMMARIZE(kingAllyEffect25),
+    FV_SUMMARIZE(kingEnemyEffect25),
     summarizePart<SummaryType>("total",
                                reinterpret_cast<const typename FV::Type*>(&fv),
                                sizeof(fv) / sizeof(typename FV::Type)),
